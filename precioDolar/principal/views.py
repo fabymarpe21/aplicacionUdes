@@ -22,19 +22,14 @@ def calcularPrecioDolar(request):
 	consulta = "SELECT * FROM principal_dolar where fecha='"
 	consulta += hoy.strftime("%Y/%m/%d")
 	consulta += "'"
-	print consulta
 	cursor = connection.cursor()
-	print '2'
 	cursor.execute(consulta)
-	print '3'
 	names = cursor.fetchall()
 	numeroDia = 0
 	valoresAnterioresdolar = []
 	while numeroDia < 10:
 		hace_dias = hoy - datetime.timedelta(days=numeroDia)
-		print service
 		url = service + hace_dias.strftime("%Y-%m-%d") +'.json?' + urllib.urlencode({'app_id': app_id})
-		print 'URL', url
 		uh = urllib.urlopen(url)
 		data = uh.read()
 		js = json.loads(data)
@@ -43,10 +38,10 @@ def calcularPrecioDolar(request):
 		numeroDia += 1
 	datos = {'precios':valoresAnterioresdolar}
 	if(len(names)==0): 
-		dolar = Dolar(precios=valoresAnterioresdolar)
+		dolar = Dolar(fecha=hoy, precios=valoresAnterioresdolar)
 		dolar.save()  
 	return HttpResponse(json.dumps(datos))
 	
 def inicio(request):
-	precioDolar = Dolar.objects.all()
+	precioDolar = Dolar.objects.order_by('-fecha')
 	return render_to_response('principal/inicio.html',{'lista':precioDolar})

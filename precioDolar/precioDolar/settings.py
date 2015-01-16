@@ -73,7 +73,7 @@ WSGI_APPLICATION = 'precioDolar.wsgi.application'
 DATABASES = {
 	'default': {
 		'ENGINE': 'django.db.backends.mysql',
-		'NAME': 'prueba',
+		'NAME': 'prueba2',
 		'USER': 'root',
 		'PASSWORD':'elgg2014',
 		'HOST':'bd.enjambre.gov.co',
