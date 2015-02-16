@@ -5,17 +5,83 @@
 		<div class="page-header">
 			<h1>Consulta Precio del Dolar</h1>
 		</div>
-		<div class="col-md-12 jumbotron" style="margin-bottom:20px;">
-			<button onclick="consultarPrecio()">Consultar Hoy</button>
+		<div style="margin-bottom:20px;">
+			<button id="bot" onclick="consultarPrecio()">Consultar Hoy</button>
 		</div>
-		<div class="col-md-12" style="margin-bottom:20px;" id="error"></div>
+		<div id="barchart_material" style="width: 900px; height: 300px;"></div>
 		<div class="col-md-8" id="precio">
 		</div>
-		<div class="col-md-4" id="grafica">
+		<div class="col-md-4" id="enlaces">
+			<h3>Consultas Anteriores</h3>
+				{% for elemento in lista %}
+				<ul>
+					<li><strong><a name="{{elemento.precios}}" onclick="actualizar(this)">{{elemento.fecha}}<a></strong></li>
+				</ul>
+				{% endfor %}
 		</div>
 		</div>
-	<script>
+	<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+			<script type="text/javascript">
+			google.load("visualization", "1.1", {packages:["bar"]});
+			  //google.setOnLoadCallback(drawChart);
+			  function drawChart(fechas, precios) {
+				var data = google.visualization.arrayToDataTable([
+				  ['Fecha', 'Precio Dolar'],
+				  [fechas[0],precios[0]],
+				  [fechas[1],precios[1]],
+				  [fechas[2],precios[2]],
+				  [fechas[3],precios[3]],
+				  [fechas[4],precios[4]],
+				  [fechas[5],precios[5]],
+				  [fechas[6],precios[6]],
+				  [fechas[7],precios[7]],
+				  [fechas[8],precios[8]],
+				  [fechas[9],precios[9]],
+				]);
+
+				var options = {
+				  chart: {
+					title: 'Grafica (Precios del Dolar para el dia: ' + fechas[0] + ')',
+				  },
+				  bars: 'horizontal' // Required for Material Bar Charts.
+				};
+
+				var chart = new google.charts.Bar(document.getElementById('barchart_material'));
+
+				chart.draw(data, options);
+			  }
+			  
+	function actualizar(elem){
+		var html="<h2>Precios del Dolar</h2><table><tr><td width='70%'><strong>Fecha</strong></td><td width='70%'><strong>Precio</strong></td></tr>";
+		var fechas = [];
+		var valores = []; 
+		var divPrecio=$("#precio");
+		var precios = elem.name;
+		var datos = precios.split("[");
+		datos = datos[1].split("},");
+		for(var i = 0; i < datos.length; i++){
+			var det = datos[i].split("{'fecha': '");
+			det = det[1].split("', 'valorDolar':");
+			var fecha = det[0];
+			if(i == datos.length - 1){
+				var precio = det[1].split("}]");
+				precio = precio[0];
+			}else{			
+				var precio = det[1];
+				}
+				fechas[i] = fecha;
+				valores[i] = Number(precio);
+			html+="<tr><td>"+fecha+"</td><td>"+precio+"</td></tr>";
+			
+			}
+		html+="</table>";
+		divPrecio.html(html);
+		drawChart(fechas, valores);
+	}
+	
 	function consultarPrecio(){
+	var boton = document.getElementById("bot");
+	boton.disabled=true;
 	var divPrecio=$("#precio");
 	var divGrafica=$("#garfica");
 	$.ajax({
@@ -30,15 +96,22 @@
 	}).fail(function() {
 		
 	});;
+	
 }
-
 function actualizarDivPrecios(datos){
+	var fechas = [];
+	var valores = []; 
 	var html="<h2>Precios del Dolar</h2><table><tr><td width='70%'><strong>Fecha</strong></td><td width='70%'><strong>Precio</strong></td></tr>";
 	
 	$.each(datos, function(i, item) {
+	fechas[i]=item.fecha;
+	valores[i]=Number(item.valorDolar);
 	html+="<tr><td>"+item.fecha+"</td><td>"+item.valorDolar+"</td></tr>";
 	});
 	html+="</table>";
+	var boton = document.getElementById("bot");
+	boton.disabled=false;
+	drawChart(fechas, valores);
 	return html;
 }
 </script>

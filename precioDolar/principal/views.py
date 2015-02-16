@@ -6,6 +6,8 @@ from principal.models import Dolar
 from django.core import serializers
 from django.shortcuts import render
 from django.shortcuts import render_to_response
+import MySQLdb
+from django.db import connection
 import time
 import datetime
 import precioDolar
@@ -15,6 +17,8 @@ import urllib
 
 def lista_precios_dolar(request):
 	precioDolar = Dolar.objects.all()
+	for val in precioDolar:
+		print val.fecha
 	return render_to_response('lista_precios_dolar.html',{'lista':precioDolar})
 	
 def sobre(request):
@@ -22,11 +26,19 @@ def sobre(request):
 	return HttpResponse(html)
 		
 def calcularPrecioDolar(request):
-	print 'salsa'
 	service = 'https://openexchangerates.org/api/historical/'
 	app_id = '55453b33e897478a9b8546b16c5c1c27'
 	hoy = datetime.datetime.now()
-	numeroDia = 0; 
+	consulta = "SELECT * FROM principal_dolar where fecha='"
+	consulta += hoy.strftime("%Y/%m/%d")
+	consulta += "'"
+	print consulta
+	cursor = connection.cursor()
+	print '2'
+	cursor.execute(consulta)
+	print '3'
+	names = cursor.fetchall()
+	numeroDia = 0
 	valoresAnterioresdolar = []
 	while numeroDia < 10:
 		hace_dias = hoy - datetime.timedelta(days=numeroDia)
@@ -39,8 +51,10 @@ def calcularPrecioDolar(request):
 		item = js['rates']['COP']
 		valoresAnterioresdolar.append({"fecha":hace_dias.strftime("%Y/%m/%d"), 'valorDolar':item})
 		numeroDia += 1
-	
-	datos= {'precios':valoresAnterioresdolar}
+	datos = {'precios':valoresAnterioresdolar}
+	if(len(names)==0): 
+		dolar = Dolar(precios=valoresAnterioresdolar)
+		dolar.save()  
 	return HttpResponse(json.dumps(datos))
 	
 	#jsonData = demjson.encode(valoresAnterioresdolar)
@@ -107,9 +121,5 @@ def calcularPrecioDolar(request):
 	#return render_to_response('principal/lista_precios_dolar.html', {'fecha': hoy.strftime("%Y/%m/%d"), 'hoy':jsonData})
 
 def inicio(request):
-	precioDolar = Dolar.objects.all
-	miTemplate = loader.get_template("principal/inicio.html")
-	params= Dolar.objects.all()
-	print params
-	return HttpResponse(miTemplate.render(params))
-	#return render_to_response('inicio.html', {'lista':precioDolar})
+	precioDolar = Dolar.objects.all()
+	return render_to_response('principal/inicio.html',{'lista':precioDolar})
