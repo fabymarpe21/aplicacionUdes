@@ -1,4 +1,4 @@
-django==1.9
+django==1.8b1
 djorm-ext-pgarray==0.10
 djorm-pgarray==1.2
 mysql-python==1.2.5
