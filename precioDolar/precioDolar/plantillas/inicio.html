@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang=’es’>
+	<head>
+		<title>Lista Precios del Dolar</title>
+		<link rel="stylesheet" type="text/css" href="style.css"/>
+		<meta charset='utf-8'
+		
+	</head>
+	<body>
+		<div id="contenedor">
+		  <div id="cabecera">PRECIOS DEL DOLAR</div>
+		 
+		  <div id="menu">
+		   {% if lista %}
+			<h3>Consultas Anteriores</h3>
+			{% for elemento in lista %}
+			<ul>
+				<li><strong>{{elemento.fecha}}</strong></li>
+			</ul>
+			{% endfor %}
+			{% else %}
+				<p>No existen consultas anteriores</p>
+			{% endif %}
+			</div>
+		 
+		  <div id="contenido
+			  <form action="." method="GET">
+				<a href="/precioDolar">Agregar una receta</a>
+			  </form>
+		  </div>
+		 
+		  <div id="pie">
+		  </div>
+		</div>
+	</body>
+</html>
+	
