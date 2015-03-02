@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Consulta Precio del Dolar{% endblock %}
+{% block content %}
+		<div class="col-md-10 col-md-offset-1" >
+		<div class="page-header">
+			<h1>Consulta Precio del Dolar</h1>
+		</div>
+		<div class="col-md-12 jumbotron" style="margin-bottom:20px;">
+			<button onclick="consultarPrecio()">Consultar Hoy</button>
+		</div>
+		<div class="col-md-12" style="margin-bottom:20px;" id="error"></div>
+		<div class="col-md-8" id="precio">
+		</div>
+		<div class="col-md-4" id="grafica">
+		</div>
+		</div>
+	<script>
+	function consultarPrecio(){
+	var divPrecio=$("#precio");
+	var divGrafica=$("#garfica");
+	$.ajax({
+		data:{
+		},
+		url:'{% url "precio_dolar" %}',
+		type:'get',
+		success: function(data){
+			var precios=JSON.parse(data).precios;
+			divPrecio.html(actualizarDivPrecios(precios));
+		}
+	}).fail(function() {
+		
+	});;
+}
+
+function actualizarDivPrecios(datos){
+	var html="<h2>Precios del Dolar</h2><table><tr><td width='70%'><strong>Fecha</strong></td><td width='70%'><strong>Precio</strong></td></tr>";
+	
+	$.each(datos, function(i, item) {
+	html+="<tr><td>"+item.fecha+"</td><td>"+item.valorDolar+"</td></tr>";
+	});
+	html+="</table>";
+	return html;
+}
+</script>
+{% endblock %}

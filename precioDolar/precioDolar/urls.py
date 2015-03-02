@@ -1,10 +1,9 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
-admin.autodiscover()
 urlpatterns = patterns('',
-url(r'^$','principal.views.inicio'),
-url(r'^sobre/$','principal.views.sobre'),
-url(r'^precioDolar/$','principal.views.calcularPrecioDolar'),
-url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-url(r'^admin/', include(admin.site.urls)),
+		# Examples:
+		# url(r'^$', 'Twitter.views.home', name='home'),
+		# url(r'^blog/', include('blog.urls')),
+		url(r'^consultar/', include('principal.urls')),
+		url(r'^admin/', include(admin.site.urls)),
 )
